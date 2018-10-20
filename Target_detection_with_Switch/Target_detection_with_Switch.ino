@@ -1,14 +1,4 @@
 //
-
-//bool value = falsee // true false statement
-//void function () {} // for grouping a seet of statements
-// int function () {} // returns an int from function
-// bool function ()
-// &&   // LOGICAL AND
-// !    // LOGICAL NOT
-// ||   // LOGICAL OR
-
-
 // RoboSlam Target Finding
 // Written by Ciaran Gibson and Simon Moloney
 //
@@ -19,11 +9,6 @@
 //
 //---
 int target_hit = 0;
-bool spin_left = false;
-bool target_acquired = false;
-int  distances [100];
-int  index;
-int  max_instances = 10;
 //--
 
 // The setup routine runs once when the power is switched on.
@@ -45,20 +30,12 @@ void setup()
   Serial.begin(9600);
 }
 
-int calculate_distance(int duration) {
-  return 0.5 * 1e-6 * duration * 340.0*1.41; // 1.41 was for distance correction
-}
-
-function smooth(int[] distances) {
-  // sort array
-  // return middle value of array - max_instaces / 2
-}
 
 void loop()
 {
   int duration, cycles;
   double distance;
-  int has_hit, median_distance;
+  int x;
 
 
 
@@ -79,14 +56,8 @@ void loop()
     delayMicroseconds(10);
   }
  
-  distance = calculate_distance(duration);
-  distances[index] = distance;
-  index++;
+  distance = 0.5 * 1e-6 * duration * 340.0*1.41; // 1.41 was for distance correction
 
-  median_distance = smooth(distances);
-  if (index >= max_instances) {
-    index = 0;
-  }
   //Want to find median of distance
   
   Serial.print (distance);
@@ -95,13 +66,12 @@ void loop()
 //---
 
  
-  has_hit = digitalRead(9); // switch input
+  x = digitalRead(9); // switch input
    
-  if (has_hit == 1)
+  if (x == 1)
 
   {
-   
-  target_hit = 1 - target_hit;
+  target_hit= 1-target_hit;
 
     delay(500);
     
@@ -113,9 +83,16 @@ void loop()
   
 
   
-  } else if (median_distance < 0.5)
+  }
+
+  else
+//---
+
+
+
+
+  if (distance < 0.5)
   {
-    target_aquired = true;
     digitalWrite(2, HIGH);
 
     delay(500);
@@ -128,32 +105,22 @@ void loop()
   }
   else
   {
-    if (distance > 0.5 && target_acquired) {
-      target_acquired = false;
-      spin_left = !spin_left;  
-    }
-    if (!spin_left) {
-      digitalWrite(2, LOW);
-  
-      turn_right();
-    } else {
-      digitalWrite(2, HIGH);
-  
-      digitalWrite(3, HIGH);      //wheel 1 (Reverse)Left
-      digitalWrite(4, LOW);
-      digitalWrite(7, HIGH);      //wheel 2 (Forward)Right
-      digitalWrite(8, LOW);
-    }
+    
+    digitalWrite(2, LOW);
+
+    digitalWrite(3, LOW);      //wheel 1 (Reverse)Left
+    digitalWrite(4, HIGH);
+    digitalWrite(7, LOW);      //wheel 2 (Forward)Right
+    digitalWrite(8, HIGH);
  
-  } 
+  }
+  
+  
+  
+
 }
 
-void turn_right(){
-  digitalWrite(3, LOW);      //wheel 1 (Reverse)Left
-  digitalWrite(4, HIGH);
-  digitalWrite(7, LOW);      //wheel 2 (Forward)Right
-  digitalWrite(8, HIGH);
-}
+
 
 //- Searching motor code
 
